@@ -2,9 +2,11 @@ import { WalletType } from 'src/enums';
 import { numberToHex, hexToU8a, isHex } from '@polkadot/util';
 import { signatureVerify } from '@polkadot/util-crypto';
 
+import nacl from 'tweetnacl';
+import ethers from 'ethers';
+
 import * as bs58 from 'bs58';
 import * as nearAPI from 'near-api-js';
-import nacl from 'tweetnacl';
 
 export async function validateSignature(
   account: string,
@@ -14,16 +16,20 @@ export async function validateSignature(
 ): Promise<boolean> {
   switch (walletType) {
     case WalletType.POLKADOTJS: {
-      if (!signature.startsWith('0x')) return false;
-      if (signature.length !== 130) return false;
-
+      const sig = isHex(signature) ? signature : '0x'.concat(signature);
       const n = Number(nonce);
-      const { isValid } = signatureVerify(numberToHex(n), signature, account);
+      const { isValid } = signatureVerify(numberToHex(n), sig, account);
 
       return isValid;
     }
-    case WalletType.METAMASK:
-      return false;
+
+    case WalletType.METAMASK: {
+      const sig = isHex(signature) ? signature : '0x'.concat(signature);
+      const n = Number(nonce);
+      const address = ethers.verifyMessage(numberToHex(n), sig);
+      return address === account;
+    }
+
     case WalletType.NEAR: {
       try {
         const environment = process.env.NODE_ENV;
@@ -47,7 +53,7 @@ export async function validateSignature(
 
         return nacl.sign.detached.verify(
           Buffer.from(numberToHex(Number(nonce))),
-          Buffer.from(hexToU8a(sig)),
+          Buffer.from(hexToU8a(isHex(sig) ? sig : '0x'.concat(sig))),
           Buffer.from(publicAddress.slice(2), 'hex'),
         );
       } catch (e) {

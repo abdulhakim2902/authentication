@@ -32,6 +32,7 @@
     "bs58": "^5.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "ethers": "^6.7.0",
     "mongodb": "^5.6.0",
     "near-api-js": "^2.1.4",
     "pg": "^8.11.0",

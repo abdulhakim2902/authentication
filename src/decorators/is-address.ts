@@ -41,10 +41,19 @@ export function IsAddress(
               }
               return false;
             }
-            case WalletType.METAMASK:
+
+            case WalletType.METAMASK: {
+              if (value.length !== 42) return false;
+              return isHex(value);
+            }
+
+            case WalletType.NEAR: {
+              if (isHex(value)) return true;
+              if (value.endsWith('.testnet')) return true;
+              if (value.endsWith('.near')) return true;
               return false;
-            case WalletType.NEAR:
-              return false;
+            }
+
             default:
               return false;
           }

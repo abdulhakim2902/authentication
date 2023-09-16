@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wallet } from './wallet.entity';
-import { CreateWalletDto } from 'src/user/dto';
+import { CreateWalletDto } from 'src/modules/user/dto';
 import { CreateWalletDto as CreateWallet, DeleteWalletDto } from './dto';
 import { validateSignature } from 'src/utils/validate-signature';
 
@@ -47,7 +47,7 @@ export class WalletService {
     return { count: result.affected };
   }
 
-  async addWallet(id: number, data: CreateWalletDto): Promise<Wallet> {
+  async create(id: number, data: CreateWalletDto): Promise<Wallet> {
     try {
       const walletData = new CreateWallet({
         id: data.id,

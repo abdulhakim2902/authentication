@@ -9,8 +9,8 @@ import {
   ValidationPipe,
   Delete,
 } from '@nestjs/common';
-import { WalletService } from 'src/wallet/wallet.service';
-import { Wallet } from 'src/wallet/wallet.entity';
+import { WalletService } from 'src/modules/wallet/wallet.service';
+import { Wallet } from 'src/modules/wallet/wallet.entity';
 import { CreateWalletDto } from '../dto';
 import {
   ApiTags,
@@ -18,9 +18,9 @@ import {
   ApiCreatedResponse,
   ApiFoundResponse,
 } from '@nestjs/swagger';
-import { DeleteWalletDto } from 'src/wallet/dto';
+import { DeleteWalletDto } from 'src/modules/wallet/dto';
 
-@ApiTags('Wallet')
+@ApiTags('UserWallet')
 @ApiBearerAuth()
 @Controller('users')
 export class UserWalletController {
@@ -39,7 +39,7 @@ export class UserWalletController {
     @Param('id', ParseIntPipe) id: number,
     @Body() data: CreateWalletDto,
   ): Promise<Wallet> {
-    return this.walletService.addWallet(id, data);
+    return this.walletService.create(id, data);
   }
 
   @Delete('/:id/wallets')

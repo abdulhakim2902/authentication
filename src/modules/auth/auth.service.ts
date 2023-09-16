@@ -1,9 +1,9 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/modules/user/user.entity';
 import { Repository } from 'typeorm';
 import { CreateWalletDto, RegisterUserDto, CreateUserDto } from './dto';
-import { Wallet } from 'src/wallet/wallet.entity';
+import { Wallet } from 'src/modules/wallet/wallet.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { isHex } from '@polkadot/util';
 import { validateSignature } from 'src/utils/validate-signature';
@@ -19,7 +19,7 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Wallet)
     private readonly walletRepository: Repository<Wallet>,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(data: RegisterUserDto) {
@@ -33,20 +33,26 @@ export class AuthService {
       const registerData = new RegisterUserDto(data);
       const walletData = new CreateWalletDto({
         id: registerData.walletAddress,
-        blockchainPlatform: registerData.blockchainPlatform,
         name: registerData.walletName,
+        blockchainPlatform: registerData.blockchainPlatform,
       });
       const userData = new CreateUserDto({
         name: registerData.name,
         email: registerData.email,
       });
+
       const user = this.userRepository.create(userData);
-      const result = await this.userRepository.insert(user);
       const wallet = this.walletRepository.create(walletData);
-      user.id = result.identifiers[0].id;
-      wallet.userId = user.id;
-      await this.walletRepository.insert(wallet);
+
+      const result = await this.userRepository.insert(user);
+      const userId = result.identifiers[0].id;
+
+      user.id = userId;
       user.wallets = [wallet];
+      wallet.userId = userId;
+
+      await this.walletRepository.insert(wallet);
+
       return user;
     } catch (e) {
       if (['23502', '23503', '23505'].includes(e.code)) {

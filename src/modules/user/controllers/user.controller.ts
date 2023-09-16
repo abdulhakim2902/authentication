@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiBearerAuth, ApiFoundResponse, ApiTags } from '@nestjs/swagger';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/modules/user/user.service';
 import { User } from '../user.entity';
 import { UserProfile } from 'src/decorators';
 

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { BlockchainPlatform } from 'src/enums';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/modules/user/user.entity';
 import {
   Column,
   CreateDateColumn,

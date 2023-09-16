@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Wallet } from 'src/wallet/wallet.entity';
+import { Wallet } from 'src/modules/wallet/wallet.entity';
 import {
   BeforeInsert,
   Column,

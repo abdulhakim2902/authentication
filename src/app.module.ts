@@ -1,13 +1,11 @@
-// import { Module } from '@nestjs/common';
 import { Module } from '@nestjs/common/decorators';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/user.entity';
-import { UserModule } from './user/user.module';
-import { Wallet } from './wallet/wallet.entity';
-import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { Modules } from './modules';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './modules/user/user.entity';
+import { Wallet } from './modules/wallet/wallet.entity';
 
 @Module({
   imports: [
@@ -33,8 +31,7 @@ import { join } from 'path';
       }),
       inject: [ConfigService],
     }),
-    AuthModule,
-    UserModule,
+    Modules,
   ],
   controllers: [],
   providers: [],

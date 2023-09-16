@@ -2,32 +2,21 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { Modules } from './modules';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = isNaN(parseInt(process.env.PORT)) ? 3000 : +process.env.PORT;
 
-  const firstConfig = new DocumentBuilder()
-    .setTitle('Auth API')
-    .setDescription('Auth API description')
+  const config = new DocumentBuilder()
+    .setTitle('Web3 Authentication API')
     .build();
 
-  const authDocument = SwaggerModule.createDocument(app, firstConfig, {
-    include: [AuthModule],
+  const document = SwaggerModule.createDocument(app, config, {
+    include: [Modules],
   });
-  SwaggerModule.setup('explorer/auth', app, authDocument);
 
-  const secondConfig = new DocumentBuilder()
-    .setTitle('User API')
-    .setDescription('User API description')
-    .addBearerAuth()
-    .build();
-  const userDocument = SwaggerModule.createDocument(app, secondConfig, {
-    include: [UserModule],
-  });
-  SwaggerModule.setup('explorer/user', app, userDocument);
+  SwaggerModule.setup('explorer', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
